@@ -1,0 +1,9 @@
+
+/plugin/godot/
+/plugin/godot/*
+/plugin/plugins/GodotFirebase/Pods/
+/.idea/
+/.yarn/
+/yarn.lock
+/package.json
+/.pnp.cjs
