@@ -1,0 +1,17 @@
+[config]
+name="GodotFirebase"
+binary="GodotFirebase.a"
+
+initialization="register_godot_firebase"
+deinitialization="unregister_godot_firebase"
+
+[dependencies]
+linked=[]
+embedded=[]
+system=[]
+
+capabilities=[]
+
+files=[]
+
+[plist]
