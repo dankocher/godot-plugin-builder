@@ -1,7 +1,5 @@
 
 /plugin/godot/
-/plugin/godot/*
-**/plugin/godot/
 /plugin/plugins/GodotFirebase/Pods/
 /.idea/
 /.yarn/
