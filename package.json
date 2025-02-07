@@ -1,0 +1,19 @@
+{
+    "name": "Godot Plugin Builder",
+    "displayName": "Godot Plugin Builder",
+    "version": "0.0.1",
+    "build": 1,
+    "scripts": {
+        "android_create_keystore": "keytool -v -genkey -keystore android.keystore -alias android -keyalg RSA -validity 10000",
+        "version": "node ./scripts/version.js",
+        "translations": "node ./scripts/translations.js",
+        "webp": "node ./scripts/convertToWebP.js",
+        "adb": "adb connect <phone-ip-address>:5555",
+        "adb_reverse": "adb reverse tcp:5555 tcp:5555",
+        "scons": "cd plugin && scons target=release_debug arch=arm64 plugin=GodotFirebase version=4.0"
+    },
+    "engines": {
+        "node": ">=18"
+    },
+    "packageManager": "yarn@3.6.4"
+}
