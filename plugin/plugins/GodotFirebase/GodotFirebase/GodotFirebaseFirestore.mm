@@ -17,19 +17,19 @@ GodotFirebaseFirestore *GodotFirebaseFirestore::get_singleton() {
     return instance;
 }
 
-    void GodotFirebaseFirestore::_bind_methods() {
-        ADD_SIGNAL(MethodInfo("document_added", PropertyInfo(Variant::BOOL, "success"), PropertyInfo(Variant::STRING, "error_message")));
-        ADD_SIGNAL(MethodInfo("document_retrieved", PropertyInfo(Variant::BOOL, "success"), PropertyInfo(Variant::DICTIONARY, "result")));
-        ADD_SIGNAL(MethodInfo("document_updated", PropertyInfo(Variant::BOOL, "success"), PropertyInfo(Variant::STRING, "error_message")));
-        ADD_SIGNAL(MethodInfo("document_deleted", PropertyInfo(Variant::BOOL, "success"), PropertyInfo(Variant::STRING, "error_message")));
-        ADD_SIGNAL(MethodInfo("query_executed", PropertyInfo(Variant::BOOL, "success"), PropertyInfo(Variant::ARRAY, "results")));
+void GodotFirebaseFirestore::_bind_methods() {
+    ADD_SIGNAL(MethodInfo("document_added", PropertyInfo(Variant::BOOL, "success"), PropertyInfo(Variant::STRING, "error_message")));
+    ADD_SIGNAL(MethodInfo("document_retrieved", PropertyInfo(Variant::BOOL, "success"), PropertyInfo(Variant::DICTIONARY, "result")));
+    ADD_SIGNAL(MethodInfo("document_updated", PropertyInfo(Variant::BOOL, "success"), PropertyInfo(Variant::STRING, "error_message")));
+    ADD_SIGNAL(MethodInfo("document_deleted", PropertyInfo(Variant::BOOL, "success"), PropertyInfo(Variant::STRING, "error_message")));
+    ADD_SIGNAL(MethodInfo("query_executed", PropertyInfo(Variant::BOOL, "success"), PropertyInfo(Variant::ARRAY, "results")));
 
-        ClassDB::bind_method(D_METHOD("add_document", "collection", "data"), &GodotFirebaseFirestore::add_document);
-        ClassDB::bind_method(D_METHOD("get_document", "collection", "document_id"), &GodotFirebaseFirestore::get_document);
-        ClassDB::bind_method(D_METHOD("update_document", "collection", "document_id", "data"), &GodotFirebaseFirestore::update_document);
-        ClassDB::bind_method(D_METHOD("delete_document", "collection", "document_id"), &GodotFirebaseFirestore::delete_document);
-        ClassDB::bind_method(D_METHOD("query_documents", "collection", "query_parameters"), &GodotFirebaseFirestore::query_documents);
-    }
+    ClassDB::bind_method(D_METHOD("add_document", "collection", "data"), &GodotFirebaseFirestore::add_document);
+    ClassDB::bind_method(D_METHOD("get_document", "collection", "document_id"), &GodotFirebaseFirestore::get_document);
+    ClassDB::bind_method(D_METHOD("update_document", "collection", "document_id", "data"), &GodotFirebaseFirestore::update_document);
+    ClassDB::bind_method(D_METHOD("delete_document", "collection", "document_id"), &GodotFirebaseFirestore::delete_document);
+    ClassDB::bind_method(D_METHOD("query_documents", "collection", "query_parameters"), &GodotFirebaseFirestore::query_documents);
+}
 
 /**
  * Método para agregar un documento a una colección.
