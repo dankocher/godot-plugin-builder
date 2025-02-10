@@ -17,21 +17,24 @@ GodotFirebaseFirestore *GodotFirebaseFirestore::get_singleton() {
     return instance;
 }
 
-void GodotFirebaseFirestore::_bind_methods() {
-    // CRUD
-    ClassDB::bind_method(D_METHOD("add_document", "collection", "data", "callback"), &GodotFirebaseFirestore::add_document);
-    ClassDB::bind_method(D_METHOD("get_document", "collection", "document_id", "callback"), &GodotFirebaseFirestore::get_document);
-    ClassDB::bind_method(D_METHOD("update_document", "collection", "document_id", "data", "callback"), &GodotFirebaseFirestore::update_document);
-    ClassDB::bind_method(D_METHOD("delete_document", "collection", "document_id", "callback"), &GodotFirebaseFirestore::delete_document);
+    void GodotFirebaseFirestore::_bind_methods() {
+        ADD_SIGNAL(MethodInfo("document_added", PropertyInfo(Variant::BOOL, "success"), PropertyInfo(Variant::STRING, "error_message")));
+        ADD_SIGNAL(MethodInfo("document_retrieved", PropertyInfo(Variant::BOOL, "success"), PropertyInfo(Variant::DICTIONARY, "result")));
+        ADD_SIGNAL(MethodInfo("document_updated", PropertyInfo(Variant::BOOL, "success"), PropertyInfo(Variant::STRING, "error_message")));
+        ADD_SIGNAL(MethodInfo("document_deleted", PropertyInfo(Variant::BOOL, "success"), PropertyInfo(Variant::STRING, "error_message")));
+        ADD_SIGNAL(MethodInfo("query_executed", PropertyInfo(Variant::BOOL, "success"), PropertyInfo(Variant::ARRAY, "results")));
 
-    // Consultas avanzadas
-    ClassDB::bind_method(D_METHOD("query_documents", "collection", "query_parameters", "callback"), &GodotFirebaseFirestore::query_documents);
-}
+        ClassDB::bind_method(D_METHOD("add_document", "collection", "data"), &GodotFirebaseFirestore::add_document);
+        ClassDB::bind_method(D_METHOD("get_document", "collection", "document_id"), &GodotFirebaseFirestore::get_document);
+        ClassDB::bind_method(D_METHOD("update_document", "collection", "document_id", "data"), &GodotFirebaseFirestore::update_document);
+        ClassDB::bind_method(D_METHOD("delete_document", "collection", "document_id"), &GodotFirebaseFirestore::delete_document);
+        ClassDB::bind_method(D_METHOD("query_documents", "collection", "query_parameters"), &GodotFirebaseFirestore::query_documents);
+    }
 
 /**
  * Método para agregar un documento a una colección.
  */
-void GodotFirebaseFirestore::add_document(String collection, Dictionary data, Callable callback) {
+void GodotFirebaseFirestore::add_document(String collection, Dictionary data) {
     NSMutableDictionary *firebaseData = [NSMutableDictionary dictionary];
     Array keys = data.keys();
 
@@ -40,7 +43,6 @@ void GodotFirebaseFirestore::add_document(String collection, Dictionary data, Ca
         Variant value = data[key];
         NSString *objcKey = [NSString stringWithUTF8String:key.utf8().get_data()];
 
-        // Conversión de tipos compatibles
         if (value.get_type() == Variant::Type::STRING) {
             firebaseData[objcKey] = [NSString stringWithUTF8String:value.operator String().utf8().get_data()];
         } else if (value.get_type() == Variant::Type::INT) {
@@ -56,19 +58,9 @@ void GodotFirebaseFirestore::add_document(String collection, Dictionary data, Ca
     FIRCollectionReference *collectionRef = [[FIRFirestore firestore] collectionWithPath:objcCollection];
     [collectionRef addDocumentWithData:firebaseData completion:^(NSError * _Nullable error) {
         if (error) {
-//             call_deferred(callback, Array::make(false, String(error.localizedDescription.UTF8String)));
-            Array args;
-            args.append(false); // Agregamos "false" como primer argumento
-            args.append(String(error.localizedDescription.UTF8String)); // Añadimos el error como segundo argumento
-            callback.call_deferred(args);
-
+            emit_signal("document_added", false, String(error.localizedDescription.UTF8String));
         } else {
-        
-            Array args;
-            args.append(true); // Suponiendo que el primer argumento indica éxito
-            callback.call_deferred(args);
-
-//             call_deferred(callback, Array::make(true));
+            emit_signal("document_added", true, "");
         }
     }];
 }
@@ -76,30 +68,21 @@ void GodotFirebaseFirestore::add_document(String collection, Dictionary data, Ca
 /**
  * Obtiene un documento por su ID.
  */
-void GodotFirebaseFirestore::get_document(String collection, String document_id, Callable callback) {
+void GodotFirebaseFirestore::get_document(String collection, String document_id) {
     NSString *objcCollection = [NSString stringWithUTF8String:collection.utf8().get_data()];
     NSString *objcDocumentID = [NSString stringWithUTF8String:document_id.utf8().get_data()];
 
     FIRDocumentReference *docRef = [[[FIRFirestore firestore] collectionWithPath:objcCollection] documentWithPath:objcDocumentID];
     [docRef getDocumentWithCompletion:^(FIRDocumentSnapshot * _Nullable snapshot, NSError * _Nullable error) {
         if (snapshot.exists) {
-            // Convertir datos a Dictionary de Godot
             Dictionary result;
             NSDictionary *data = snapshot.data;
             for (NSString *key in data.allKeys) {
                 result[String(key.UTF8String)] = Variant(data[key]);
             }
-            Array args;
-            args.append(true);
-            args.append(result);
-            callback.call_deferred(args);
-//            call_deferred(callback, Array::make(true, result));
+            emit_signal("document_retrieved", true, result);
         } else {
-            Array args;
-            args.append(false);
-            args.append(String(error.localizedDescription.UTF8String));
-            callback.call_deferred(args);
-//            call_deferred(callback, Array::make(false, String(error.localizedDescription.UTF8String)));
+            emit_signal("document_retrieved", false, Dictionary());
         }
     }];
 }
@@ -107,7 +90,7 @@ void GodotFirebaseFirestore::get_document(String collection, String document_id,
 /**
  * Actualiza un documento específico.
  */
-void GodotFirebaseFirestore::update_document(String collection, String document_id, Dictionary data, Callable callback) {
+void GodotFirebaseFirestore::update_document(String collection, String document_id, Dictionary data) {
     NSMutableDictionary *firebaseData = [NSMutableDictionary dictionary];
     Array keys = data.keys();
 
@@ -116,53 +99,55 @@ void GodotFirebaseFirestore::update_document(String collection, String document_
         Variant value = data[key];
         NSString *objcKey = [NSString stringWithUTF8String:key.utf8().get_data()];
 
+        // Conversión de tipos soportados por Firestore
         if (value.get_type() == Variant::Type::STRING) {
             firebaseData[objcKey] = [NSString stringWithUTF8String:value.operator String().utf8().get_data()];
         } else if (value.get_type() == Variant::Type::INT) {
             firebaseData[objcKey] = @(int(value));
+        } else if (value.get_type() == Variant::Type::FLOAT) {
+            firebaseData[objcKey] = @(real_t(value));
+        } else if (value.get_type() == Variant::Type::BOOL) {
+            firebaseData[objcKey] = @(bool(value));
         }
     }
-    
+
     NSString *objcCollection = [NSString stringWithUTF8String:collection.utf8().get_data()];
     NSString *objcDocumentID = [NSString stringWithUTF8String:document_id.utf8().get_data()];
     FIRDocumentReference *docRef = [[[FIRFirestore firestore] collectionWithPath:objcCollection] documentWithPath:objcDocumentID];
 
     [docRef updateData:firebaseData completion:^(NSError * _Nullable error) {
         if (error) {
-            Array args;
-            args.append(false);
-            args.append(String(error.localizedDescription.UTF8String));
-            callback.call_deferred(args);
+            // Emitimos la señal con error
+            emit_signal("document_updated", false, String(error.localizedDescription.UTF8String));
         } else {
-            Array args;
-            args.append(true);
-            callback.call_deferred(args);
+            // Emitimos la señal con éxito
+            emit_signal("document_updated", true, "");
         }
     }];
 }
 
 
-void GodotFirebaseFirestore::delete_document(String collection, String document_id, Callable callback) {
+void GodotFirebaseFirestore::delete_document(String collection, String document_id) {
     NSString *objcCollection = [NSString stringWithUTF8String:collection.utf8().get_data()];
     NSString *objcDocumentID = [NSString stringWithUTF8String:document_id.utf8().get_data()];
 
+    // Obtener referencia al documento a eliminar
     FIRDocumentReference *docRef = [[[FIRFirestore firestore] collectionWithPath:objcCollection] documentWithPath:objcDocumentID];
+
+    // Ejecutar la operación de eliminación
     [docRef deleteDocumentWithCompletion:^(NSError * _Nullable error) {
         if (error) {
-            Array args;
-            args.append(false);
-            args.append(String(error.localizedDescription.UTF8String));
-            callback.call_deferred(args);
+            // Emitir señal en caso de error
+            emit_signal("document_deleted", false, String(error.localizedDescription.UTF8String));
         } else {
-            Array args;
-            args.append(true);
-            callback.call_deferred(args);
+            // Emitir señal en caso de éxito
+            emit_signal("document_deleted", true, "");
         }
     }];
 }
 
 
-void GodotFirebaseFirestore::query_documents(String collection, Dictionary query_parameters, Callable callback) {
+void GodotFirebaseFirestore::query_documents(String collection, Dictionary query_parameters) {
     NSString *objcCollection = [NSString stringWithUTF8String:collection.utf8().get_data()];
     FIRCollectionReference *collectionRef = [[FIRFirestore firestore] collectionWithPath:objcCollection];
     FIRQuery *query = collectionRef;
@@ -237,13 +222,10 @@ void GodotFirebaseFirestore::query_documents(String collection, Dictionary query
     // Ejecutamos la consulta
     [query getDocumentsWithCompletion:^(FIRQuerySnapshot * _Nullable snapshot, NSError * _Nullable error) {
         if (error) {
-            // En caso de error, devolvemos el mensaje de error mediante el callback
-            Array args;
-            args.append(false);
-            args.append(String(error.localizedDescription.UTF8String));
-            callback.call_deferred(args);
+            // Emisión de la señal en caso de error
+            emit_signal("query_executed", false, Array(), String(error.localizedDescription.UTF8String));
         } else {
-            // Procesamos los documentos y devolvemos el resultado como un Array de Dictionaries
+            // Procesamos los documentos y los devolvemos como un Array de Dictionaries
             Array results;
             for (FIRDocumentSnapshot *document in snapshot.documents) {
                 Dictionary doc_data;
@@ -253,10 +235,8 @@ void GodotFirebaseFirestore::query_documents(String collection, Dictionary query
                 }
                 results.push_back(doc_data);
             }
-            Array args;
-            args.append(true);
-            args.append(results);
-            callback.call_deferred(args);
+            // Emisión de la señal en caso de éxito
+            emit_signal("query_executed", true, results, String());
         }
     }];
 }

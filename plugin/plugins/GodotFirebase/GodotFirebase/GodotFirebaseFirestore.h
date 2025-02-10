@@ -22,13 +22,13 @@ public:
     static GodotFirebaseFirestore *get_singleton();
 
     // Operaciones CRUD
-    void add_document(String collection, Dictionary data, Callable callback);
-    void get_document(String collection, String document_id, Callable callback);
-    void update_document(String collection, String document_id, Dictionary data, Callable callback);
-    void delete_document(String collection, String document_id, Callable callback);
+    void add_document(String collection, Dictionary data);
+    void get_document(String collection, String document_id);
+    void update_document(String collection, String document_id, Dictionary data);
+    void delete_document(String collection, String document_id);
 
     // Consultas avanzadas
-    void query_documents(String collection, Dictionary query_parameters, Callable callback);
+    void query_documents(String collection, Dictionary query_parameters);
 
     GodotFirebaseFirestore();
     ~GodotFirebaseFirestore();
