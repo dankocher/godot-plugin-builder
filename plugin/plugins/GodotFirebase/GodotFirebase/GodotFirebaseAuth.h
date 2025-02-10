@@ -7,9 +7,12 @@
 
 //#import <GodotFirebase-Swift.h>
 
+#import <FirebaseCore/FirebaseCore.h>
+
 #import <GoogleSignIn/GoogleSignIn.h>
+#import <GoogleSignIn/GIDSignIn.h>
 #import <FirebaseAuth/FirebaseAuth.h>
-//#import <FirebaseAuthUI/FirebaseAuthUI.h>
+#import <FirebaseAuth/FirebaseAuth-Swift.h>
 
 
 #include "core/object/class_db.h"
@@ -27,8 +30,9 @@ public:
     static GodotFirebaseAuth *get_singleton(); // Método público para obtener el singleton
 
     // Métodos expuestos
-//    void sign_in_with_google();
+    void sign_in_with_google();
     void sign_in_anonymously();
+    void sign_in_with_email(const String &email, const String &password);
     void sign_out();
     Variant get_current_user();
 
