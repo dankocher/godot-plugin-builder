@@ -3,15 +3,8 @@
 
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
-
-
-//#import <GodotFirebase-Swift.h>
-
 #import <FirebaseCore/FirebaseCore.h>
-
 #import <GoogleSignIn/GoogleSignIn.h>
-#import <GoogleSignIn/GIDSignIn.h>
-#import <FirebaseAuth/FirebaseAuth.h>
 #import <FirebaseAuth/FirebaseAuth-Swift.h>
 
 

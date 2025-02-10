@@ -1,13 +1,5 @@
 #include "GodotFirebaseAuth.h"
 
-#import <FirebaseCore/FirebaseCore.h>
-
-#import <GoogleSignIn/GoogleSignIn.h>
-#import <GoogleSignIn/GIDSignIn.h>
-#import <FirebaseAuth/FirebaseAuth.h>
-#import <FirebaseAuth/FirebaseAuth-Swift.h>
-
-
 
 //#import "GodotFirebaseAuthBridge.h" // Importa la clase puente
 
@@ -40,6 +32,9 @@ GodotFirebaseAuth *GodotFirebaseAuth::get_singleton() {
 
 void GodotFirebaseAuth::sign_in_with_google() {
     // Obtener el ViewController principal necesario para el flujo de autenticación
+    
+    NSLog(@"[GodotFirebaseAuth]: Attempt signin with google");
+    
     UIViewController *rootViewController;
 
     for (UIWindowScene *scene in [UIApplication sharedApplication].connectedScenes) {
@@ -48,6 +43,23 @@ void GodotFirebaseAuth::sign_in_with_google() {
                 break;
             }
         }
+    
+    // Obtén el clientID desde FirebaseApp
+    NSString *clientID = [FIRApp defaultApp].options.clientID;
+    if (clientID == nil) {
+        NSLog(@"[GodotFirebaseAuth]: Error - No se pudo obtener el clientID");
+        return;
+    }
+    
+    NSLog(@"[GodotFirebaseAuth]: ClientID: %@", clientID);
+    // Crea el objeto de configuración de Google Sign-In
+    GIDConfiguration *config = [[GIDConfiguration alloc] initWithClientID:clientID];
+
+    // Configura GIDSignIn mediante la instancia compartida
+    [GIDSignIn sharedInstance].configuration = config;
+
+    // Mensaje de configuración exitosa
+    NSLog(@"[GodotFirebaseAuth]: Google Sign-In configurado correctamente con Client ID");
 
 
     [[GIDSignIn sharedInstance] signInWithPresentingViewController:rootViewController
@@ -62,6 +74,9 @@ void GodotFirebaseAuth::sign_in_with_google() {
             GIDGoogleUser *user = result.user;
             NSString *idToken = user.idToken.tokenString;
             NSString *accessToken = user.accessToken.tokenString;
+        
+        
+            NSLog(@"[GodotFirebaseAuth]: GIDSignIn %@", idToken);
 
             // Crea credenciales de Firebase con los tokens proporcionados por Google
             FIRAuthCredential *credential = [FIRGoogleAuthProvider credentialWithIDToken:idToken accessToken:accessToken];
@@ -91,6 +106,7 @@ void GodotFirebaseAuth::sign_in_with_google() {
 
 // Método para iniciar sesión anónima
 void GodotFirebaseAuth::sign_in_anonymously() {
+    NSLog(@"[GodotFirebaseAuth]: sign_in_anonymously");
     FIRAuth *auth = [FIRAuth auth];
     [auth signInAnonymouslyWithCompletion:^(FIRAuthDataResult * _Nullable authResult, NSError * _Nullable error) {
         if (error) {
