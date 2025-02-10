@@ -1,6 +1,6 @@
 [config]
 name="GodotFirebase"
-binary="GodotFirebase.a"
+binary="libGodotFirebase.release_debug.a"
 
 initialization="register_godot_firebase"
 deinitialization="unregister_godot_firebase"
