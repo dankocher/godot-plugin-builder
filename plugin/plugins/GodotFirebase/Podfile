@@ -22,7 +22,7 @@ target 'GodotFirebase' do
 #  pod 'FirebaseStorage'
 #  pod 'FirebaseDatabase'
 
-  pod 'GoogleSignIn'
+#  pod 'GoogleSignIn'
 
 #   pod 'GoogleUtilities'
 #   pod 'FirebaseCoreExtension'
