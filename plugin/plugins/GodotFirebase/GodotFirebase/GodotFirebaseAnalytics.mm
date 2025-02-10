@@ -20,6 +20,7 @@ GodotFirebaseAnalytics *GodotFirebaseAnalytics::get_singleton() {
 }
 
 void GodotFirebaseAnalytics::log_event(String event_name, Dictionary parameters) {
+    NSLog(@"[GodotFirebaseAnalytics]: log event");
     NSMutableDictionary *firebaseParams = [NSMutableDictionary dictionary];
     Array keys = parameters.keys();
     
