@@ -19,7 +19,7 @@ opts = Variables([], ARGUMENTS)
 env = DefaultEnvironment()
 
 # Define our options
-opts.Add(EnumVariable('target', "Compilation target", 'debug', ['debug', 'release', "release_debug"]))
+opts.Add(EnumVariable('target', "Compilation target", 'release', ['debug', 'release', "release_debug"]))
 opts.Add(EnumVariable('arch', "Compilation Architecture", '', ['', 'arm64', 'armv7', 'x86_64']))
 opts.Add(BoolVariable('simulator', "Compilation platform", 'no'))
 opts.Add(BoolVariable('use_llvm', "Use the LLVM / Clang compiler", 'no'))
@@ -125,15 +125,27 @@ else:
 
 
 if env["plugin"] == "GodotFirebase":
+
+#     generated_swift_header = "/Users/daniel/Library/Developer/Xcode/DerivedData/GodotFirebase-dzvyonwhvnwbxgfkrdkhyftczfum/Index.noindex/Build/Intermediates.noindex/GodotFirebase.build/Debug-iphoneos/GodotFirebase.build/Objects-normal/arm64"
+
     env.Append(CPPPATH=[
         '.',
         'godot',
         'godot/core',
+        'godot/core/object',
+        'godot/core/config',
         'godot/platform/ios',
         'plugins/GodotFirebase/Pods/',
         'plugins/GodotFirebase/Pods/FirebaseCore/FirebaseCore/Sources/Public',
+        'plugins/GodotFirebase/Pods/FirebaseFirestoreInternal/Firestore/Source/Public',
+        'plugins/GodotFirebase/Pods/FirebaseAuth/FirebaseAuth/Sources/ObjC',
+        'plugins/GodotFirebase/Pods/FirebaseAuth/FirebaseAuth/Sources/Public',
+        'plugins/GodotFirebase/Pods/GoogleSignIn/GoogleSignIn/Sources/Public',
+        'plugins/GodotFirebase/Pods/GTMSessionFetcher/Sources/Core/Public',
         'plugins/GodotFirebase/Pods/FirebaseRemoteConfig/FirebaseRemoteConfig/Sources/Public',
         'plugins/GodotFirebase/Pods/Headers/Public',  # Otros headers de CocoaPods
+        'plugins/GodotFirebase/Pods/Headers/Private',  # Otros headers de CocoaPods
+#         generated_swift_header
     ])
     env.Append(CCFLAGS=[
         "-Fplugins/GodotFirebase/Pods/FirebaseAnalytics/Frameworks/FirebaseAnalytics.xcframework/ios-arm64/",  # Framework para arm64
@@ -156,7 +168,6 @@ if env["plugin"] == "GodotFirebase":
 #     env.Append(LIBS=[
 #        "godot_ios",  # Enlace a la biblioteca del núcleo de Godot para iOS
 #     ])
-
 
 
 else:
