@@ -17,11 +17,16 @@ GodotFirebase *GodotFirebase::get_singleton() {
     return instance;
 }
 
-void GodotFirebase::initialize() {
-    if ([FIRApp defaultApp] == nil) {
-        [FIRApp configure]; // Configura Firebase
-        emit_signal("firebase_initialized");
-    }
+bool GodotFirebase::initialize() {
+    NSLog(@"Firebase Initialize");
+//    if ([FIRApp defaultApp] == nil) {
+//        [FIRApp configure]; // Configura Firebase
+//        emit_signal("firebase_initialized");
+//    }
+    
+    [FIRApp configure]; // Configura Firebase
+    emit_signal("firebase_initialized");
+    return true;
 }
 
 void GodotFirebase::_bind_methods() {

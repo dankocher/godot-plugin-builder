@@ -2,8 +2,9 @@
 #define GODOT_FIREBASE_H
 
 #import <Foundation/Foundation.h>
+#import <FirebaseCore/FirebaseCore.h>
+
 #include "core/object/class_db.h"
-#import <FirebaseCore/FIRApp.h>
 
 
 class GodotFirebase : public Object {
@@ -17,7 +18,7 @@ protected:
 
 public:
 
-    void initialize();
+    bool initialize();
     
     static GodotFirebase *get_singleton();
 
