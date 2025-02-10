@@ -10,6 +10,7 @@
         "webp": "node ./scripts/convertToWebP.js",
         "adb": "adb connect <phone-ip-address>:5555",
         "adb_reverse": "adb reverse tcp:5555 tcp:5555",
+        "rm_derivated": "rm -rf ~/Library/Developer/Xcode/DerivedData/* && rm -rf ~/Library/Caches/org.swift.swiftpm",
         "scons": "cd plugin && scons target=release plugin=GodotFirebase"
     },
     "engines": {
