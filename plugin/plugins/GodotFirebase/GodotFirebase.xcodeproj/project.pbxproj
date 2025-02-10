@@ -3,35 +3,24 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 56;
+	objectVersion = 60;
 	objects = {
 
 /* Begin PBXBuildFile section */
+		28C6D46172C5493295A5C62D /* Pods_GodotFirebase.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE49F4B2D081A1F80A8B2204 /* Pods_GodotFirebase.framework */; };
 		65B59D672D54E7E900396142 /* GodotFirebaseAnalytics.mm in Sources */ = {isa = PBXBuildFile; fileRef = 65B59D662D54E7E900396142 /* GodotFirebaseAnalytics.mm */; };
 		65B59D6A2D54E87900396142 /* GodotFirebaseRemoteConfig.mm in Sources */ = {isa = PBXBuildFile; fileRef = 65B59D692D54E87900396142 /* GodotFirebaseRemoteConfig.mm */; };
 		65B59D712D575B2800396142 /* GodotFirebaseAuth.mm in Sources */ = {isa = PBXBuildFile; fileRef = 65B59D702D575B0D00396142 /* GodotFirebaseAuth.mm */; };
-		65B59D792D579FD800396142 /* Pods_GodotFirebase.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3DD8A831A4A7FDDD925FE242 /* Pods_GodotFirebase.framework */; };
-		65B59D7A2D579FD800396142 /* Pods_GodotFirebase.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 3DD8A831A4A7FDDD925FE242 /* Pods_GodotFirebase.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		65B59D842D57EBC200396142 /* FirebaseAuth.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 65B59D752D579E8700396142 /* FirebaseAuth.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		65CCA0E92D594C790097B36E /* GodotFirebaseFirestore.mm in Sources */ = {isa = PBXBuildFile; fileRef = 65CCA0E82D594C790097B36E /* GodotFirebaseFirestore.mm */; };
+		65CCA0FD2D5A13800097B36E /* FirebaseAuth.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 65CCA0FB2D5A13800097B36E /* FirebaseAuth.xcframework */; };
+		65CCA0FE2D5A13800097B36E /* FirebaseAuthInterop.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 65CCA0FC2D5A13800097B36E /* FirebaseAuthInterop.xcframework */; };
 		65D4EDEC2CF3CC3600C51B0A /* GodotFirebase.mm in Sources */ = {isa = PBXBuildFile; fileRef = 65D4EDE82CF3CC3600C51B0A /* GodotFirebase.mm */; };
 		65D4EDED2CF3CC3600C51B0A /* GodotFirebaseModule.mm in Sources */ = {isa = PBXBuildFile; fileRef = 65D4EDEA2CF3CC3600C51B0A /* GodotFirebaseModule.mm */; };
 		65D4EDEE2CF3CC3600C51B0A /* GodotFirebase.h in Copy Files */ = {isa = PBXBuildFile; fileRef = 65D4EDE72CF3CC3600C51B0A /* GodotFirebase.h */; };
+		A512E08CA1FB2A5CB57A8713 /* Pods_GodotFirebase.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C8A6656BFEF29B359ABCD6DB /* Pods_GodotFirebase.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
-		65B59D782D579E8800396142 /* Embed Frameworks */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 10;
-			files = (
-				65B59D842D57EBC200396142 /* FirebaseAuth.framework in Embed Frameworks */,
-				65B59D7A2D579FD800396142 /* Pods_GodotFirebase.framework in Embed Frameworks */,
-			);
-			name = "Embed Frameworks";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		65ED8D2F2CF3BA8F00FC65E7 /* Copy Files */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -46,7 +35,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		3DD8A831A4A7FDDD925FE242 /* Pods_GodotFirebase.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_GodotFirebase.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		382A132530970466C1DEB8E4 /* Pods-GodotFirebase.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-GodotFirebase.release.xcconfig"; path = "Target Support Files/Pods-GodotFirebase/Pods-GodotFirebase.release.xcconfig"; sourceTree = "<group>"; };
+		5F776B0BB6361A06A68CBF58 /* Pods-GodotFirebase.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-GodotFirebase.debug.xcconfig"; path = "Target Support Files/Pods-GodotFirebase/Pods-GodotFirebase.debug.xcconfig"; sourceTree = "<group>"; };
 		65B59D652D54E7B000396142 /* GodotFirebaseAnalytics.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GodotFirebaseAnalytics.h; sourceTree = "<group>"; };
 		65B59D662D54E7E900396142 /* GodotFirebaseAnalytics.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = GodotFirebaseAnalytics.mm; sourceTree = "<group>"; };
 		65B59D682D54E83700396142 /* GodotFirebaseRemoteConfig.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GodotFirebaseRemoteConfig.h; sourceTree = "<group>"; };
@@ -54,17 +44,17 @@
 		65B59D6F2D575AE800396142 /* GodotFirebaseAuth.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GodotFirebaseAuth.h; sourceTree = "<group>"; };
 		65B59D702D575B0D00396142 /* GodotFirebaseAuth.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = GodotFirebaseAuth.mm; sourceTree = "<group>"; };
 		65B59D742D576FD300396142 /* GodotFirebase-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "GodotFirebase-Bridging-Header.h"; sourceTree = "<group>"; };
-		65B59D752D579E8700396142 /* FirebaseAuth.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = FirebaseAuth.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		65B59D7B2D57A00200396142 /* FirebaseCore.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = FirebaseCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		65CCA0E72D594C680097B36E /* GodotFirebaseFirestore.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GodotFirebaseFirestore.h; sourceTree = "<group>"; };
 		65CCA0E82D594C790097B36E /* GodotFirebaseFirestore.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = GodotFirebaseFirestore.mm; sourceTree = "<group>"; };
+		65CCA0FB2D5A13800097B36E /* FirebaseAuth.xcframework */ = {isa = PBXFileReference; expectedSignature = "AppleDeveloperProgram:EQHXZ8M8AV:Google LLC"; lastKnownFileType = wrapper.xcframework; path = FirebaseAuth.xcframework; sourceTree = "<group>"; };
+		65CCA0FC2D5A13800097B36E /* FirebaseAuthInterop.xcframework */ = {isa = PBXFileReference; expectedSignature = "AppleDeveloperProgram:EQHXZ8M8AV:Google LLC"; lastKnownFileType = wrapper.xcframework; path = FirebaseAuthInterop.xcframework; sourceTree = "<group>"; };
 		65D4EDE72CF3CC3600C51B0A /* GodotFirebase.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GodotFirebase.h; sourceTree = "<group>"; };
 		65D4EDE82CF3CC3600C51B0A /* GodotFirebase.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = GodotFirebase.mm; sourceTree = "<group>"; };
 		65D4EDE92CF3CC3600C51B0A /* GodotFirebaseModule.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GodotFirebaseModule.h; sourceTree = "<group>"; };
 		65D4EDEA2CF3CC3600C51B0A /* GodotFirebaseModule.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = GodotFirebaseModule.mm; sourceTree = "<group>"; };
 		65ED8D312CF3BA8F00FC65E7 /* libGodotFirebase.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libGodotFirebase.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		7F0A2A4BA649FE7E2982DDB0 /* Pods-GodotFirebase.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-GodotFirebase.debug.xcconfig"; path = "Target Support Files/Pods-GodotFirebase/Pods-GodotFirebase.debug.xcconfig"; sourceTree = "<group>"; };
-		A6E368C38D74FFC5108E5B27 /* Pods-GodotFirebase.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-GodotFirebase.release.xcconfig"; path = "Target Support Files/Pods-GodotFirebase/Pods-GodotFirebase.release.xcconfig"; sourceTree = "<group>"; };
+		C8A6656BFEF29B359ABCD6DB /* Pods_GodotFirebase.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_GodotFirebase.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		EE49F4B2D081A1F80A8B2204 /* Pods_GodotFirebase.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_GodotFirebase.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -72,7 +62,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				65B59D792D579FD800396142 /* Pods_GodotFirebase.framework in Frameworks */,
+				65CCA0FD2D5A13800097B36E /* FirebaseAuth.xcframework in Frameworks */,
+				65CCA0FE2D5A13800097B36E /* FirebaseAuthInterop.xcframework in Frameworks */,
+				28C6D46172C5493295A5C62D /* Pods_GodotFirebase.framework in Frameworks */,
+				A512E08CA1FB2A5CB57A8713 /* Pods_GodotFirebase.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -82,9 +75,7 @@
 		0F138CC4129FD1E88BAFB022 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				65B59D7B2D57A00200396142 /* FirebaseCore.framework */,
-				65B59D752D579E8700396142 /* FirebaseAuth.framework */,
-				3DD8A831A4A7FDDD925FE242 /* Pods_GodotFirebase.framework */,
+				EE49F4B2D081A1F80A8B2204 /* Pods_GodotFirebase.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -92,10 +83,20 @@
 		1EC0E20D0FBA5A236F1C5A1B /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				7F0A2A4BA649FE7E2982DDB0 /* Pods-GodotFirebase.debug.xcconfig */,
-				A6E368C38D74FFC5108E5B27 /* Pods-GodotFirebase.release.xcconfig */,
+				5F776B0BB6361A06A68CBF58 /* Pods-GodotFirebase.debug.xcconfig */,
+				382A132530970466C1DEB8E4 /* Pods-GodotFirebase.release.xcconfig */,
 			);
 			path = Pods;
+			sourceTree = "<group>";
+		};
+		65CCA0FA2D5A135E0097B36E /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				65CCA0FB2D5A13800097B36E /* FirebaseAuth.xcframework */,
+				65CCA0FC2D5A13800097B36E /* FirebaseAuthInterop.xcframework */,
+				C8A6656BFEF29B359ABCD6DB /* Pods_GodotFirebase.framework */,
+			);
+			path = Frameworks;
 			sourceTree = "<group>";
 		};
 		65D4EDEB2CF3CC3600C51B0A /* GodotFirebase */ = {
@@ -122,6 +123,7 @@
 			isa = PBXGroup;
 			children = (
 				65D4EDEB2CF3CC3600C51B0A /* GodotFirebase */,
+				65CCA0FA2D5A135E0097B36E /* Frameworks */,
 				65ED8D322CF3BA8F00FC65E7 /* Products */,
 				1EC0E20D0FBA5A236F1C5A1B /* Pods */,
 				0F138CC4129FD1E88BAFB022 /* Frameworks */,
@@ -143,11 +145,10 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 65ED8D3B2CF3BA8F00FC65E7 /* Build configuration list for PBXNativeTarget "GodotFirebase" */;
 			buildPhases = (
-				76C3147AB86A4D100F370F5A /* [CP] Check Pods Manifest.lock */,
+				F40ED36389835CC6D2DC02E3 /* [CP] Check Pods Manifest.lock */,
 				65ED8D2D2CF3BA8F00FC65E7 /* Sources */,
 				65ED8D2E2CF3BA8F00FC65E7 /* Frameworks */,
 				65ED8D2F2CF3BA8F00FC65E7 /* Copy Files */,
-				65B59D782D579E8800396142 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -192,7 +193,7 @@
 /* End PBXProject section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		76C3147AB86A4D100F370F5A /* [CP] Check Pods Manifest.lock */ = {
+		F40ED36389835CC6D2DC02E3 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -351,9 +352,8 @@
 		};
 		65ED8D3C2CF3BA8F00FC65E7 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 7F0A2A4BA649FE7E2982DDB0 /* Pods-GodotFirebase.debug.xcconfig */;
+			baseConfigurationReference = 5F776B0BB6361A06A68CBF58 /* Pods-GodotFirebase.debug.xcconfig */;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO;
 				CLANG_ADDRESS_SANITIZER_CONTAINER_OVERFLOW = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
 				CLANG_ENABLE_MODULES = YES;
@@ -365,7 +365,7 @@
 					"/Users/daniel/GodotProjects/plugin-builder/plugin/godot/platform/ios",
 					"/Users/daniel/GodotProjects/plugin-builder/plugin/godot",
 				);
-				IPHONEOS_DEPLOYMENT_TARGET = 16.2;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
@@ -378,9 +378,8 @@
 		};
 		65ED8D3D2CF3BA8F00FC65E7 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = A6E368C38D74FFC5108E5B27 /* Pods-GodotFirebase.release.xcconfig */;
+			baseConfigurationReference = 382A132530970466C1DEB8E4 /* Pods-GodotFirebase.release.xcconfig */;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO;
 				CLANG_ADDRESS_SANITIZER_CONTAINER_OVERFLOW = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
 				CLANG_ENABLE_MODULES = YES;
@@ -392,7 +391,7 @@
 					"/Users/daniel/GodotProjects/plugin-builder/plugin/godot/platform/ios",
 					"/Users/daniel/GodotProjects/plugin-builder/plugin/godot",
 				);
-				IPHONEOS_DEPLOYMENT_TARGET = 16.2;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
