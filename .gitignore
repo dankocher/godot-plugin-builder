@@ -2,6 +2,7 @@
 /plugin/godot/
 /plugin/plugins/GodotFirebase/Pods/
 /plugin/plugins/GodotFirebase/build/
+/plugin/plugins/GodotFirebase/Frameworks/
 /plugin/plugins/GodotFirebase/GodotFirebase/*.o
 /plugin/plugins/GodotFirebase/GodotFirebase/*.d
 /plugin/plugins/GodotFirebase/Podfile.lock
