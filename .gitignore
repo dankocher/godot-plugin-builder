@@ -1,9 +1,14 @@
 
 /plugin/godot/
 /plugin/plugins/GodotFirebase/Pods/
+/plugin/plugins/GodotFirebase/build/
+/plugin/plugins/GodotFirebase/GodotFirebase/*.o
+/plugin/plugins/GodotFirebase/GodotFirebase/*.d
+/plugin/plugins/GodotFirebase/Podfile.lock
 /.idea/
 /.yarn/
 /yarn.lock
 /package.json
 /.pnp.cjs
 /plugin/godot
+/plugin/.sconsign.dblite
