@@ -4,6 +4,9 @@
 GodotFirebase *godot_firebase;
 GodotFirebaseAnalytics *godot_firebase_analytics;
 GodotFirebaseRemoteConfig *godot_firebase_remote_config;
+GodotFirebaseAuth *godot_firebase_auth;
+GodotFirebaseFirestore *godot_firebase_firestore;
+
 
 void register_godot_firebase() {
     godot_firebase = memnew(GodotFirebase);
@@ -14,6 +17,13 @@ void register_godot_firebase() {
 
     godot_firebase_remote_config = memnew(GodotFirebaseRemoteConfig);
     Engine::get_singleton()->add_singleton(Engine::Singleton("GodotFirebaseRemoteConfig", godot_firebase_remote_config));
+    
+    godot_firebase_auth = memnew(GodotFirebaseAuth);
+    Engine::get_singleton()->add_singleton(Engine::Singleton("GodotFirebaseAuth", godot_firebase_auth));
+    
+    godot_firebase_firestore = memnew(GodotFirebaseFirestore);
+    Engine::get_singleton()->add_singleton(Engine::Singleton("GodotFirebaseFirestore", godot_firebase_firestore));
+
 }
 
 void unregister_godot_firebase() {
@@ -26,4 +36,11 @@ void unregister_godot_firebase() {
     if (godot_firebase_remote_config) {
         memdelete(godot_firebase_remote_config);
     }
+    if (godot_firebase_auth) {
+        memdelete(godot_firebase_auth);
+    }
+    if (godot_firebase_firestore) {
+        memdelete(godot_firebase_firestore);
+    }
+
 }

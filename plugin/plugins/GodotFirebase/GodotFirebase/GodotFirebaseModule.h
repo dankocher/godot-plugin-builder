@@ -6,6 +6,9 @@
 #include "GodotFirebase.h"
 #include "GodotFirebaseAnalytics.h"
 #include "GodotFirebaseRemoteConfig.h"
+#include "GodotFirebaseAuth.h"
+#include "GodotFirebaseFirestore.h"
+
 
 void register_godot_firebase();
 void unregister_godot_firebase();
