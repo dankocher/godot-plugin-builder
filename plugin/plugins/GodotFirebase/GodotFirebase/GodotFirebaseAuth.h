@@ -15,9 +15,14 @@ class GodotFirebaseAuth : public Object {
 
 private:
     static GodotFirebaseAuth *instance;
-
+    
 protected:
     static void _bind_methods(); // Método protegido
+    
+    // Declaración de métodos auxiliares
+    UIViewController* get_root_view_controller() const; // Método para obtener el RootViewController
+    Dictionary create_user_data(FIRUser *user) const;
+
 
 public:
     static GodotFirebaseAuth *get_singleton(); // Método público para obtener el singleton

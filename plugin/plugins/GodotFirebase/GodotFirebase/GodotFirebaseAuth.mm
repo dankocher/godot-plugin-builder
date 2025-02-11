@@ -28,41 +28,46 @@ GodotFirebaseAuth *GodotFirebaseAuth::get_singleton() {
     return instance;
 }
 
-// Método para iniciar sesión con Google
-
-void GodotFirebaseAuth::sign_in_with_google() {
-    // Obtener el ViewController principal necesario para el flujo de autenticación
-    
-    NSLog(@"[GodotFirebaseAuth]: Attempt signin with google");
-    
-    UIViewController *rootViewController;
-
+// Extraer lógica para obtener el RootViewController
+UIViewController* GodotFirebaseAuth::get_root_view_controller() const {
     for (UIWindowScene *scene in [UIApplication sharedApplication].connectedScenes) {
-            if (scene.activationState == UISceneActivationStateForegroundActive) {
-                rootViewController = scene.keyWindow.rootViewController;
-                break;
-            }
+        if (scene.activationState == UISceneActivationStateForegroundActive) {
+            return scene.keyWindow.rootViewController;
         }
-    
-    // Obtén el clientID desde FirebaseApp
-    NSString *clientID = [FIRApp defaultApp].options.clientID;
-    if (clientID == nil) {
+    }
+    NSLog(@"[GodotFirebaseAuth]: Error - No se pudo obtener el RootViewController");
+    return NULL;
+}
+
+// Extraer lógica para crear un diccionario con detalles del usuario
+Dictionary GodotFirebaseAuth::create_user_data(FIRUser *user) const {
+    Dictionary user_data;
+    user_data["uid"] = String(user.uid.UTF8String);
+    user_data["email"] = user.email != NULL ? String(user.email.UTF8String) : "";
+    user_data["display_name"] = user.displayName != NULL ? String(user.displayName.UTF8String) : "";
+    user_data["photo_url"] = user.photoURL != NULL ? String([[user.photoURL absoluteString] UTF8String]) : "";
+    user_data["is_anonymous"] = user.isAnonymous;
+    return user_data;
+}
+
+// Método para iniciar sesión con Google
+void GodotFirebaseAuth::sign_in_with_google() {
+    NSLog(@"[GodotFirebaseAuth]: Attempt signin with Google");
+
+    UIViewController *root_view_controller = get_root_view_controller();
+    if (!root_view_controller) return;
+
+    NSString *client_id = [FIRApp defaultApp].options.clientID;
+    if (!client_id) {
         NSLog(@"[GodotFirebaseAuth]: Error - No se pudo obtener el clientID");
         return;
     }
-    
-    NSLog(@"[GodotFirebaseAuth]: ClientID: %@", clientID);
-    // Crea el objeto de configuración de Google Sign-In
-    GIDConfiguration *config = [[GIDConfiguration alloc] initWithClientID:clientID];
 
-    // Configura GIDSignIn mediante la instancia compartida
+    GIDConfiguration *config = [[GIDConfiguration alloc] initWithClientID:client_id];
     [GIDSignIn sharedInstance].configuration = config;
-
-    // Mensaje de configuración exitosa
     NSLog(@"[GodotFirebaseAuth]: Google Sign-In configurado correctamente con Client ID");
 
-
-    [[GIDSignIn sharedInstance] signInWithPresentingViewController:rootViewController
+    [[GIDSignIn sharedInstance] signInWithPresentingViewController:root_view_controller
         completion:^(GIDSignInResult * _Nullable result, NSError * _Nullable error) {
             if (error || !result) {
                 NSLog(@"[GodotFirebaseAuth]: Error al iniciar sesión con Google: %@", error.localizedDescription);
@@ -70,37 +75,74 @@ void GodotFirebaseAuth::sign_in_with_google() {
                 return;
             }
 
-            // Obtén los tokens de autenticación de Google
-            GIDGoogleUser *user = result.user;
-            NSString *idToken = user.idToken.tokenString;
-            NSString *accessToken = user.accessToken.tokenString;
-        
-        
-            NSLog(@"[GodotFirebaseAuth]: GIDSignIn %@", idToken);
+            FIRAuthCredential *credential = [FIRGoogleAuthProvider
+                credentialWithIDToken:result.user.idToken.tokenString
+                           accessToken:result.user.accessToken.tokenString];
 
-            // Crea credenciales de Firebase con los tokens proporcionados por Google
-            FIRAuthCredential *credential = [FIRGoogleAuthProvider credentialWithIDToken:idToken accessToken:accessToken];
+            FIRUser *current_user = [FIRAuth auth].currentUser;
 
-            // Inicia sesión en Firebase con las credenciales
-            [[FIRAuth auth] signInWithCredential:credential
+            // Verifica si el usuario actual es anónimo
+            if (current_user.isAnonymous) {
+                // Intenta vincular la cuenta anónima con las credenciales de Google
+                [current_user linkWithCredential:credential
                                       completion:^(FIRAuthDataResult * _Nullable authResult, NSError * _Nullable error) {
-                if (error) {
-                    NSLog(@"[GodotFirebaseAuth]: Error al autenticar con Firebase usando Google: %@", error.localizedDescription);
-                    emit_signal("google_login_failed", String(error.localizedDescription.UTF8String));
-                } else {
-                    Dictionary user_data;
-                    user_data["uid"] = String(authResult.user.uid.UTF8String);
-                    user_data["email"] = authResult.user.email != NULL ? String(authResult.user.email.UTF8String) : "";
-                    user_data["display_name"] = authResult.user.displayName != NULL ? String(authResult.user.displayName.UTF8String) : "";
-                    user_data["is_anonymous"] = authResult.user.anonymous;
+                    if (error) {
+                        // Manejar error de credencial ya asociada a otra cuenta
+                        if (error.code == FIRAuthErrorCodeCredentialAlreadyInUse) {
+                            NSLog(@"[GodotFirebaseAuth]: Esta credencial ya está asociada con otra cuenta.");
 
-                    // Emitir señal de éxito con los datos del usuario
-                    emit_signal("google_login_success", user_data);
-                    NSLog(@"Inicio de sesión con éxito. UID: %@", authResult.user.uid);
+                            // Obtener el usuario existente que tiene la credencial
+                            FIRAuthCredential *existingCredential = error.userInfo[@"FIRAuthErrorUserInfoUpdatedCredentialKey"];
+//                            FIRAuthCredential *existingCredential = error.userInfo[FIRAuthUpdatedCredentialKey];
+                            NSLog(@"[GodotFirebaseAuth]: existingCredential: %@", existingCredential);
 
-                }
-            }];
-        }];
+                            // Cerrar la cuenta anónima actual antes de iniciar sesión
+                            [current_user deleteWithCompletion:^(NSError * _Nullable deleteError) {
+                                if (deleteError) {
+                                    NSLog(@"[GodotFirebaseAuth]: No se pudo eliminar la cuenta anónima: %@", deleteError.localizedDescription);
+                                    emit_signal("google_login_failed",
+                                        "Failed to delete anonymous account: " + String(deleteError.localizedDescription.UTF8String));
+                                    return;
+                                }
+
+                                // Iniciar sesión con la credencial existente (Google)
+                                [[FIRAuth auth] signInWithCredential:existingCredential
+                                                           completion:^(FIRAuthDataResult * _Nullable authResult, NSError * _Nullable signInError) {
+                                    if (signInError) {
+                                        NSLog(@"[GodotFirebaseAuth]: Error al iniciar sesión con las credenciales existentes: %@", signInError.localizedDescription);
+                                        emit_signal("google_login_failed", String(signInError.localizedDescription.UTF8String));
+                                    } else {
+                                        emit_signal("google_login_success", create_user_data(authResult.user));
+                                        NSLog(@"[GodotFirebaseAuth]: Inicio de sesión exitoso. UID: %@", authResult.user.uid);
+                                    }
+                                }];
+                            }];
+                        } else {
+                            // Otros errores de vinculación
+                            NSLog(@"[GodotFirebaseAuth]: Error al vincular cuenta anónima con Google: %@", error.localizedDescription);
+                            emit_signal("google_login_failed", String(error.localizedDescription.UTF8String));
+                        }
+                    } else {
+                        // Vinculación exitosa
+                        emit_signal("google_login_success", create_user_data(authResult.user));
+                        NSLog(@"[GodotFirebaseAuth]: Cuenta anónima vinculada con éxito. UID: %@", authResult.user.uid);
+                    }
+                }];
+            } else {
+                // Si el usuario no es anónimo, intenta iniciar sesión directamente con las credenciales de Google
+                [[FIRAuth auth] signInWithCredential:credential
+                                           completion:^(FIRAuthDataResult * _Nullable authResult, NSError * _Nullable error) {
+                    if (error) {
+                        NSLog(@"[GodotFirebaseAuth]: Error al autenticar con Firebase usando Google: %@", error.localizedDescription);
+                        emit_signal("google_login_failed", String(error.localizedDescription.UTF8String));
+                    } else {
+                        emit_signal("google_login_success", create_user_data(authResult.user));
+                        NSLog(@"[GodotFirebaseAuth]: Inicio de sesión con éxito. UID: %@", authResult.user.uid);
+                    }
+                }];
+            }
+        }
+    ];
 }
 
 
@@ -115,11 +157,7 @@ void GodotFirebaseAuth::sign_in_anonymously() {
             NSLog(@"Error al autenticarse: %@", error.localizedDescription);
         } else if (authResult != NULL && authResult.user != NULL) {
             // Construir un diccionario con la información del usuario
-            Dictionary user_data;
-            user_data["uid"] = String(authResult.user.uid.UTF8String);
-            user_data["email"] = authResult.user.email != NULL ? String(authResult.user.email.UTF8String) : "";
-            user_data["display_name"] = authResult.user.displayName != NULL ? String(authResult.user.displayName.UTF8String) : "";
-            user_data["is_anonymous"] = authResult.user.anonymous;
+            Dictionary user_data = create_user_data(authResult.user);
 
             // Emitir señal de éxito con el diccionario del usuario
             emit_signal("anonymous_login_success", user_data);
@@ -157,11 +195,7 @@ void GodotFirebaseAuth::sign_in_with_email(const String &email, const String &pa
                         emit_signal("email_login_failed", String(newError.localizedDescription.UTF8String));
                         NSLog(@"Error al crear usuario: %@", newError.localizedDescription);
                     } else {
-                        Dictionary user_data;
-                        user_data["uid"] = String(newAuthResult.user.uid.UTF8String);
-                        user_data["email"] = newAuthResult.user.email != NULL ? String(newAuthResult.user.email.UTF8String) : "";
-                        user_data["display_name"] = newAuthResult.user.displayName != NULL ? String(newAuthResult.user.displayName.UTF8String) : "";
-                        user_data["is_anonymous"] = newAuthResult.user.isAnonymous;
+                        Dictionary user_data = create_user_data(newAuthResult.user);
 
                         // Emitir señal de éxito al crear la cuenta y loguear
                         emit_signal("email_login_success", user_data);
@@ -175,11 +209,7 @@ void GodotFirebaseAuth::sign_in_with_email(const String &email, const String &pa
             }
         } else {
             // Si el inicio de sesión fue exitoso
-            Dictionary user_data;
-            user_data["uid"] = String(authResult.user.uid.UTF8String);
-            user_data["email"] = authResult.user.email != NULL ? String(authResult.user.email.UTF8String) : "";
-            user_data["display_name"] = authResult.user.displayName != NULL ? String(authResult.user.displayName.UTF8String) : "";
-            user_data["is_anonymous"] = authResult.user.isAnonymous;
+            Dictionary user_data = create_user_data(authResult.user);
 
             // Emitir señal de éxito
             emit_signal("email_login_success", user_data);
@@ -213,14 +243,8 @@ Variant GodotFirebaseAuth::get_current_user() {
 
     // Comprobar si hay un usuario autenticado
     if (current_user != NULL) {
-        // Crear un diccionario para almacenar la información del usuario
-        Dictionary user_info;
-        user_info["uid"] = String(current_user.uid.UTF8String);
-        user_info["email"] = current_user.email != NULL ? String(current_user.email.UTF8String) : "";
-        user_info["display_name"] = current_user.displayName != NULL ? String(current_user.displayName.UTF8String) : "";
-        user_info["is_anonymous"] = current_user.anonymous;
 
-        return user_info; // Devolver la información como un Dictionary
+        return create_user_data(current_user); // Devolver la información como un Dictionary
     }
 
     // Si no hay usuario autenticado, devolver un Variant vacío
