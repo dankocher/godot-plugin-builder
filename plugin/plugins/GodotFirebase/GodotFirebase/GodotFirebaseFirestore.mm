@@ -23,54 +23,24 @@ void GodotFirebaseFirestore::_bind_methods() {
     ADD_SIGNAL(MethodInfo("document_updated", PropertyInfo(Variant::BOOL, "success"), PropertyInfo(Variant::STRING, "error_message")));
     ADD_SIGNAL(MethodInfo("document_deleted", PropertyInfo(Variant::BOOL, "success"), PropertyInfo(Variant::STRING, "error_message")));
     ADD_SIGNAL(MethodInfo("query_executed", PropertyInfo(Variant::BOOL, "success"), PropertyInfo(Variant::ARRAY, "results")));
-
-    ClassDB::bind_method(D_METHOD("add_document", "collection", "data"), &GodotFirebaseFirestore::add_document);
-    ClassDB::bind_method(D_METHOD("get_document", "collection", "document_id"), &GodotFirebaseFirestore::get_document);
-    ClassDB::bind_method(D_METHOD("update_document", "collection", "document_id", "data"), &GodotFirebaseFirestore::update_document);
-    ClassDB::bind_method(D_METHOD("delete_document", "collection", "document_id"), &GodotFirebaseFirestore::delete_document);
-    ClassDB::bind_method(D_METHOD("query_documents", "collection", "query_parameters"), &GodotFirebaseFirestore::query_documents);
+    
+    ClassDB::bind_method(D_METHOD("get_document", "collection", "document_id", "callback"), &GodotFirebaseFirestore::get_document);
+    ClassDB::bind_method(D_METHOD("add_document", "collection", "data", "callback"), &GodotFirebaseFirestore::add_document);
+    ClassDB::bind_method(D_METHOD("set_document", "collection", "document_id", "data", "callback"), &GodotFirebaseFirestore::set_document);
+    ClassDB::bind_method(D_METHOD("update_document", "collection", "document_id", "data", "callback"), &GodotFirebaseFirestore::update_document);
+    ClassDB::bind_method(D_METHOD("delete_document", "collection", "document_id", "callback"), &GodotFirebaseFirestore::delete_document);
+    ClassDB::bind_method(D_METHOD("query_documents", "collection", "query_parameters", "callback"), &GodotFirebaseFirestore::query_documents);
 }
 
-/**
- * Método para agregar un documento a una colección.
- */
-void GodotFirebaseFirestore::add_document(String collection, Dictionary data) {
-    NSMutableDictionary *firebaseData = [NSMutableDictionary dictionary];
-    Array keys = data.keys();
-
-    for (int i = 0; i < keys.size(); i++) {
-        String key = keys[i];
-        Variant value = data[key];
-        NSString *objcKey = [NSString stringWithUTF8String:key.utf8().get_data()];
-
-        if (value.get_type() == Variant::Type::STRING) {
-            firebaseData[objcKey] = [NSString stringWithUTF8String:value.operator String().utf8().get_data()];
-        } else if (value.get_type() == Variant::Type::INT) {
-            firebaseData[objcKey] = @(int(value));
-        } else if (value.get_type() == Variant::Type::FLOAT) {
-            firebaseData[objcKey] = @(real_t(value));
-        } else if (value.get_type() == Variant::Type::BOOL) {
-            firebaseData[objcKey] = @(bool(value));
-        }
-    }
-
-    NSString *objcCollection = [NSString stringWithUTF8String:collection.utf8().get_data()];
-    FIRCollectionReference *collectionRef = [[FIRFirestore firestore] collectionWithPath:objcCollection];
-    [collectionRef addDocumentWithData:firebaseData completion:^(NSError * _Nullable error) {
-        if (error) {
-            emit_signal("document_added", false, String(error.localizedDescription.UTF8String));
-        } else {
-            emit_signal("document_added", true, "");
-        }
-    }];
-}
 
 /**
  * Obtiene un documento por su ID.
  */
-void GodotFirebaseFirestore::get_document(String collection, String document_id) {
+void GodotFirebaseFirestore::get_document(String collection, String document_id, String callback) {
     NSString *objcCollection = [NSString stringWithUTF8String:collection.utf8().get_data()];
     NSString *objcDocumentID = [NSString stringWithUTF8String:document_id.utf8().get_data()];
+    
+    NSLog(@"[FirebaseFirestore] get_document %@ ", [NSString stringWithUTF8String:document_id.utf8()]);
 
     FIRDocumentReference *docRef = [[[FIRFirestore firestore] collectionWithPath:objcCollection] documentWithPath:objcDocumentID];
     [docRef getDocumentWithCompletion:^(FIRDocumentSnapshot * _Nullable snapshot, NSError * _Nullable error) {
@@ -78,19 +48,22 @@ void GodotFirebaseFirestore::get_document(String collection, String document_id)
             Dictionary result;
             NSDictionary *data = snapshot.data;
             for (NSString *key in data.allKeys) {
-                result[String(key.UTF8String)] = Variant(data[key]);
+                NSObject *value = data[key];
+                NSLog(@"[DEBUG] Key: %@, Class: %@, Value: %@", key, [value class], value);
+                result[String(key.UTF8String)] = nsobject_to_variant(value);
+
             }
-            emit_signal("document_retrieved", true, result);
+            emit_signal("document_retrieved", true, result, callback);
         } else {
-            emit_signal("document_retrieved", false, Dictionary());
+            emit_signal("document_retrieved", false, Dictionary(), callback);
         }
     }];
 }
 
 /**
- * Actualiza un documento específico.
+ * Método para agregar un documento a una colección.
  */
-void GodotFirebaseFirestore::update_document(String collection, String document_id, Dictionary data) {
+void GodotFirebaseFirestore::add_document(String collection, Dictionary data, String callback) {
     NSMutableDictionary *firebaseData = [NSMutableDictionary dictionary];
     Array keys = data.keys();
 
@@ -99,16 +72,63 @@ void GodotFirebaseFirestore::update_document(String collection, String document_
         Variant value = data[key];
         NSString *objcKey = [NSString stringWithUTF8String:key.utf8().get_data()];
 
-        // Conversión de tipos soportados por Firestore
-        if (value.get_type() == Variant::Type::STRING) {
-            firebaseData[objcKey] = [NSString stringWithUTF8String:value.operator String().utf8().get_data()];
-        } else if (value.get_type() == Variant::Type::INT) {
-            firebaseData[objcKey] = @(int(value));
-        } else if (value.get_type() == Variant::Type::FLOAT) {
-            firebaseData[objcKey] = @(real_t(value));
-        } else if (value.get_type() == Variant::Type::BOOL) {
-            firebaseData[objcKey] = @(bool(value));
+        firebaseData[objcKey] = convert_variant_to_nsobject(value);
+    }
+    firebaseData[@"updated_at"] = [FIRFieldValue fieldValueForServerTimestamp];
+
+    NSString *objcCollection = [NSString stringWithUTF8String:collection.utf8().get_data()];
+    FIRCollectionReference *collectionRef = [[FIRFirestore firestore] collectionWithPath:objcCollection];
+    [collectionRef addDocumentWithData:firebaseData completion:^(NSError * _Nullable error) {
+        if (error) {
+            emit_signal("document_added", false, String(error.localizedDescription.UTF8String), callback);
+        } else {
+            emit_signal("document_added", true, "");
         }
+    }];
+}
+
+void GodotFirebaseFirestore::set_document(String collection, String document_id, Dictionary data, String callback) {
+    NSMutableDictionary *firebaseData = [NSMutableDictionary dictionary];
+    Array keys = data.keys();
+
+    for (int i = 0; i < keys.size(); i++) {
+        String key = keys[i];
+        Variant value = data[key];
+        NSString *objcKey = [NSString stringWithUTF8String:key.utf8().get_data()];
+
+        firebaseData[objcKey] = convert_variant_to_nsobject(value);
+    }
+    firebaseData[@"updated_at"] = [FIRFieldValue fieldValueForServerTimestamp];
+
+    NSString *objcCollection = [NSString stringWithUTF8String:collection.utf8().get_data()];
+    NSString *objcID = [NSString stringWithUTF8String:document_id.utf8().get_data()];
+    FIRDocumentReference *docRef = [[[FIRFirestore firestore] collectionWithPath:objcCollection] documentWithPath:objcID];
+
+    // Establecemos el documento con los datos proporcionados
+    [docRef setData:firebaseData completion:^(NSError * _Nullable error) {
+        if (error) {
+            // Emitimos una señal de error
+            emit_signal("document_added", false, String(error.localizedDescription.UTF8String), callback);
+        } else {
+            // Emitimos una señal de éxito
+            emit_signal("document_added", true, "", callback);
+        }
+    }];
+}
+
+/**
+ * Actualiza un documento específico.
+ */
+void GodotFirebaseFirestore::update_document(String collection, String document_id, Dictionary data, String callback) {
+    NSMutableDictionary *firebaseData = [NSMutableDictionary dictionary];
+    Array keys = data.keys();
+
+    for (int i = 0; i < keys.size(); i++) {
+        String key = keys[i];
+        Variant value = data[key];
+        NSString *objcKey = [NSString stringWithUTF8String:key.utf8().get_data()];
+
+        firebaseData[objcKey] = convert_variant_to_nsobject(value);
     }
 
     NSString *objcCollection = [NSString stringWithUTF8String:collection.utf8().get_data()];
@@ -118,7 +138,7 @@ void GodotFirebaseFirestore::update_document(String collection, String document_
     [docRef updateData:firebaseData completion:^(NSError * _Nullable error) {
         if (error) {
             // Emitimos la señal con error
-            emit_signal("document_updated", false, String(error.localizedDescription.UTF8String));
+            emit_signal("document_updated", false, String(error.localizedDescription.UTF8String), callback);
         } else {
             // Emitimos la señal con éxito
             emit_signal("document_updated", true, "");
@@ -127,7 +147,7 @@ void GodotFirebaseFirestore::update_document(String collection, String document_
 }
 
 
-void GodotFirebaseFirestore::delete_document(String collection, String document_id) {
+void GodotFirebaseFirestore::delete_document(String collection, String document_id, String callback) {
     NSString *objcCollection = [NSString stringWithUTF8String:collection.utf8().get_data()];
     NSString *objcDocumentID = [NSString stringWithUTF8String:document_id.utf8().get_data()];
 
@@ -138,7 +158,7 @@ void GodotFirebaseFirestore::delete_document(String collection, String document_
     [docRef deleteDocumentWithCompletion:^(NSError * _Nullable error) {
         if (error) {
             // Emitir señal en caso de error
-            emit_signal("document_deleted", false, String(error.localizedDescription.UTF8String));
+            emit_signal("document_deleted", false, String(error.localizedDescription.UTF8String), callback);
         } else {
             // Emitir señal en caso de éxito
             emit_signal("document_deleted", true, "");
@@ -147,7 +167,7 @@ void GodotFirebaseFirestore::delete_document(String collection, String document_
 }
 
 
-void GodotFirebaseFirestore::query_documents(String collection, Dictionary query_parameters) {
+void GodotFirebaseFirestore::query_documents(String collection, Dictionary query_parameters, String callback) {
     NSString *objcCollection = [NSString stringWithUTF8String:collection.utf8().get_data()];
     FIRCollectionReference *collectionRef = [[FIRFirestore firestore] collectionWithPath:objcCollection];
     FIRQuery *query = collectionRef;
@@ -223,7 +243,7 @@ void GodotFirebaseFirestore::query_documents(String collection, Dictionary query
     [query getDocumentsWithCompletion:^(FIRQuerySnapshot * _Nullable snapshot, NSError * _Nullable error) {
         if (error) {
             // Emisión de la señal en caso de error
-            emit_signal("query_executed", false, Array(), String(error.localizedDescription.UTF8String));
+            emit_signal("query_executed", false, Array(), String(error.localizedDescription.UTF8String), callback);
         } else {
             // Procesamos los documentos y los devolvemos como un Array de Dictionaries
             Array results;
@@ -263,20 +283,44 @@ NSObject *GodotFirebaseFirestore::convert_variant_to_nsobject(Variant value) {
  */
 Variant GodotFirebaseFirestore::nsobject_to_variant(NSObject *object) {
     if ([object isKindOfClass:[NSString class]]) {
+        // Si el objeto es una cadena (NSString)
         return Variant(String([(NSString *)object UTF8String]));
+
     } else if ([object isKindOfClass:[NSNumber class]]) {
+        // Si el objeto es un número o booleano (NSNumber)
         NSNumber *num = (NSNumber *)object;
-        // Determinamos si es entero, booleano, o flotante
         const char *type = [num objCType];
+
+        // Verificar si es BOOLEANO (y no un número 0 o 1)
         if (strcmp(type, @encode(BOOL)) == 0) {
-            return Variant(bool([num boolValue]));
-        } else if (strcmp(type, @encode(int)) == 0 || strcmp(type, @encode(NSInteger)) == 0) {
-            return Variant(int([num intValue]));
-        } else {
-            return Variant(real_t([num floatValue]));
+            return Variant(bool([num boolValue])); // Es un booleano
         }
-    } else {
-        NSLog(@"Unsupported NSObject type for conversion");
+
+        // Si no es BOOL, se trata como un número:
+        if (strcmp(type, @encode(int)) == 0 || strcmp(type, @encode(NSInteger)) == 0 ||
+            strcmp(type, @encode(long)) == 0 || strcmp(type, @encode(long long)) == 0) {
+            // Números enteros
+            return Variant(int([num intValue]));
+        } else if (strcmp(type, @encode(unsigned int)) == 0 || strcmp(type, @encode(unsigned long)) == 0 ||
+                   strcmp(type, @encode(unsigned long long)) == 0) {
+            // Números enteros sin signo
+            return Variant(unsigned([num unsignedLongValue]));
+        } else if (strcmp(type, @encode(float)) == 0 || strcmp(type, @encode(double)) == 0) {
+            // Números flotantes
+            return Variant(real_t([num doubleValue]));
+        } else {
+            // En caso de duda, lo tratamos como un flotante genérico
+            NSLog(@"[WARN] Unknown NSNumber type encountered, fallback to float.");
+            return Variant(real_t([num doubleValue]));
+        }
+
+    } else if ([object isKindOfClass:[NSNull class]]) {
+        // Si el valor es nulo (NSNull)
         return Variant();
+
+    } else {
+        // Si el tipo de objeto no está soportado
+        NSLog(@"[ERROR] Unsupported NSObject type for conversion: %@", [object class]);
+        return Variant(); // Retorna un Variant vacío
     }
 }
