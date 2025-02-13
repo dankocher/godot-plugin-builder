@@ -130,6 +130,7 @@ void GodotFirebaseFirestore::update_document(String collection, String document_
 
         firebaseData[objcKey] = convert_variant_to_nsobject(value);
     }
+    firebaseData[@"updated_at"] = [FIRFieldValue fieldValueForServerTimestamp];
 
     NSString *objcCollection = [NSString stringWithUTF8String:collection.utf8().get_data()];
     NSString *objcDocumentID = [NSString stringWithUTF8String:document_id.utf8().get_data()];
