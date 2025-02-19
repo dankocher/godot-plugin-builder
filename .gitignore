@@ -1,5 +1,6 @@
 
-/ios/godot/
+/godot/
+/godot/*.*
 /ios/plugins/GodotFirebase/Pods/
 /ios/plugins/GodotFirebase/build/
 /ios/plugins/GodotFirebase/Frameworks/
@@ -11,5 +12,4 @@
 /yarn.lock
 /package.json
 /.pnp.cjs
-/ios/godot
 /ios/.sconsign.dblite
