@@ -1,15 +1,15 @@
 
-/plugin/godot/
-/plugin/plugins/GodotFirebase/Pods/
-/plugin/plugins/GodotFirebase/build/
-/plugin/plugins/GodotFirebase/Frameworks/
-/plugin/plugins/GodotFirebase/GodotFirebase/*.o
-/plugin/plugins/GodotFirebase/GodotFirebase/*.d
-/plugin/plugins/GodotFirebase/Podfile.lock
+/ios/godot/
+/ios/plugins/GodotFirebase/Pods/
+/ios/plugins/GodotFirebase/build/
+/ios/plugins/GodotFirebase/Frameworks/
+/ios/plugins/GodotFirebase/GodotFirebase/*.o
+/ios/plugins/GodotFirebase/GodotFirebase/*.d
+/ios/plugins/GodotFirebase/Podfile.lock
 /.idea/
 /.yarn/
 /yarn.lock
 /package.json
 /.pnp.cjs
-/plugin/godot
-/plugin/.sconsign.dblite
+/ios/godot
+/ios/.sconsign.dblite
