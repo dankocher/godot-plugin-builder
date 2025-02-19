@@ -1,0 +1,15 @@
+file /Users/daniel/GodotProjects/plugin-builder/plugin/godot/SConstruct,line 1065:
+	Configure(confdir = .sconf_temp)
+scons: Configure: Checking for C header file mntent.h... 
+.sconf_temp/conftest_d219010de4b5c77e0f8140a106ee1428_0.c <-
+  |
+  |#include "mntent.h"
+  |
+  |
+[34mCompiling [1m.sconf_temp/conftest_d219010de4b5c77e0f8140a106ee1428_0.c[22;23;24;29m ...[0m
+.sconf_temp/conftest_d219010de4b5c77e0f8140a106ee1428_0.c:2:10:{2:10-2:20}: fatal error: 'mntent.h' file not found [1]
+    2 |  #include "mntent.h"
+      |           ^~~~~~~~~~
+1 error generated.
+scons: Configure: no
+
