@@ -130,11 +130,12 @@ if env["plugin"] == "GodotFirebase":
 
     env.Append(CPPPATH=[
         '.',
-        'godot',
-        'godot/core',
-        'godot/core/object',
-        'godot/core/config',
-        'godot/platform/ios',
+        '..',
+        '../godot',
+        '../godot/core',
+        '../godot/core/object',
+        '../godot/core/config',
+        '../godot/platform/ios',
         'plugins/GodotFirebase/Pods/',
         'plugins/GodotFirebase/Pods/FirebaseCore/FirebaseCore/Sources/Public',
         'plugins/GodotFirebase/Pods/FirebaseFirestoreInternal/Firestore/Source/Public',
@@ -173,7 +174,7 @@ if env["plugin"] == "GodotFirebase":
     ])
 
     env.Append(LIBPATH=[
-        "godot/bin",  # Ruta hacia la biblioteca base de Godot
+        "../godot/bin",  # Ruta hacia la biblioteca base de Godot
     ])
 #     env.Append(LIBS=[
 #        "godot_ios",  # Enlace a la biblioteca del núcleo de Godot para iOS
@@ -183,8 +184,9 @@ if env["plugin"] == "GodotFirebase":
 else:
     env.Append(CPPPATH=[
         '.',
-        'godot',
-        'godot/platform/ios'
+        '..',
+        '../godot',
+        '../godot/platform/ios'
         ])
 
 
