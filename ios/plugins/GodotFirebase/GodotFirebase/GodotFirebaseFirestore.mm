@@ -23,7 +23,7 @@ void GodotFirebaseFirestore::_bind_methods() {
     ADD_SIGNAL(MethodInfo("document_updated", PropertyInfo(Variant::BOOL, "success"), PropertyInfo(Variant::STRING, "error_message")));
     ADD_SIGNAL(MethodInfo("document_deleted", PropertyInfo(Variant::BOOL, "success"), PropertyInfo(Variant::STRING, "error_message")));
     ADD_SIGNAL(MethodInfo("query_executed", PropertyInfo(Variant::BOOL, "success"), PropertyInfo(Variant::ARRAY, "results")));
-    
+
     ClassDB::bind_method(D_METHOD("get_document", "collection", "document_id", "callback"), &GodotFirebaseFirestore::get_document);
     ClassDB::bind_method(D_METHOD("add_document", "collection", "data", "callback"), &GodotFirebaseFirestore::add_document);
     ClassDB::bind_method(D_METHOD("set_document", "collection", "document_id", "data", "callback"), &GodotFirebaseFirestore::set_document);
@@ -39,7 +39,7 @@ void GodotFirebaseFirestore::_bind_methods() {
 void GodotFirebaseFirestore::get_document(String collection, String document_id, String callback) {
     NSString *objcCollection = [NSString stringWithUTF8String:collection.utf8().get_data()];
     NSString *objcDocumentID = [NSString stringWithUTF8String:document_id.utf8().get_data()];
-    
+
     NSLog(@"[FirebaseFirestore] get_document %@ ", [NSString stringWithUTF8String:document_id.utf8()]);
 
     FIRDocumentReference *docRef = [[[FIRFirestore firestore] collectionWithPath:objcCollection] documentWithPath:objcDocumentID];
@@ -74,7 +74,7 @@ void GodotFirebaseFirestore::add_document(String collection, Dictionary data, St
 
         firebaseData[objcKey] = convert_variant_to_nsobject(value);
     }
-    firebaseData[@"updated_at"] = [FIRFieldValue fieldValueForServerTimestamp];
+    firebaseData[@"created_at"] = [FIRFieldValue fieldValueForServerTimestamp];
 
     NSString *objcCollection = [NSString stringWithUTF8String:collection.utf8().get_data()];
     FIRCollectionReference *collectionRef = [[FIRFirestore firestore] collectionWithPath:objcCollection];
@@ -98,7 +98,7 @@ void GodotFirebaseFirestore::set_document(String collection, String document_id,
 
         firebaseData[objcKey] = convert_variant_to_nsobject(value);
     }
-    firebaseData[@"updated_at"] = [FIRFieldValue fieldValueForServerTimestamp];
+    firebaseData[@"created_at"] = [FIRFieldValue fieldValueForServerTimestamp];
 
     NSString *objcCollection = [NSString stringWithUTF8String:collection.utf8().get_data()];
     NSString *objcID = [NSString stringWithUTF8String:document_id.utf8().get_data()];
