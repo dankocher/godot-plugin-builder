@@ -1,15 +1,21 @@
 
 /godot/
 /godot/*.*
-/ios/plugins/GodotFirebase/Pods/
-/ios/plugins/GodotFirebase/build/
-/ios/plugins/GodotFirebase/Frameworks/
-/ios/plugins/GodotFirebase/GodotFirebase/*.o
-/ios/plugins/GodotFirebase/GodotFirebase/*.d
-/ios/plugins/GodotFirebase/Podfile.lock
+/ios/plugins/*/Pods/
+/ios/plugins/*/build/
+/ios/plugins/*/Frameworks/
+/ios/plugins/*/*/*.o
+/ios/plugins/*/*/*.d
+/ios/plugins/*/Podfile.lock
 /.idea/
 /.yarn/
 /yarn.lock
 /package.json
 /.pnp.cjs
 /ios/.sconsign.dblite
+!/android/*/gradle/
+!/android/*/build/
+!/android/*/.idea/
+!/android/*/.gradle/
+*.d
+*.o
