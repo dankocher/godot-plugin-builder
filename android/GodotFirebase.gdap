@@ -14,6 +14,8 @@ remote=[
 	"com.google.firebase:firebase-analytics:21.3.0",
 	"com.google.firebase:firebase-firestore-ktx:21.3.0",
 	"com.google.firebase:firebase-firestore:21.3.0",
+	"com.google.firebase:firebase-functions-ktx:21.3.0",
+	"com.google.firebase:firebase-functions:21.3.0",
 	"com.google.firebase:firebase-config-ktx:21.3.0",
 	"com.google.firebase:firebase-config:21.3.0",
 	"com.google.firebase:firebase-common-ktx:20.3.0",
