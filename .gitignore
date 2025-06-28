@@ -13,9 +13,12 @@
 /package.json
 /.pnp.cjs
 /ios/.sconsign.dblite
-!/android/*/gradle/
-!/android/*/build/
-!/android/*/.idea/
-!/android/*/.gradle/
+#/android/*/gradle/
+/android/*/build/
+/android/*/.idea/
+/android/*/.gradle/
+#/android/*/*/*/*/gradle/
+/android/*/*/*/*/.gradle/
+/android/*/*/*/*/.idea/
 *.d
 *.o
