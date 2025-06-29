@@ -86,7 +86,7 @@ class GodotFirebaseFunctions(godot: Godot) : GodotPlugin(godot) {
                     // Verifica si data es un tipo válido (HashMap en este caso)
                     if (data is HashMap<*, *>) {
                         // Convierte data a un Dictionary compatible con Godot
-                        val godotCompatibleData = convertToGodotType(data) as Dictionary
+                        val godotCompatibleData = hashMapToDictionary(data)
 
                         // Emite la señal con el Dictionary compatible
                         emitSignal("function_success", createSignalData(true, godotCompatibleData, callback))
@@ -124,24 +124,29 @@ class GodotFirebaseFunctions(godot: Godot) : GodotPlugin(godot) {
             }
 
     }
-    private fun convertToGodotType(value: Any?): Any? {
-        return when (value) {
-            is HashMap<*, *> -> { // Si es un HashMap, conviértelo a un Dictionary
-                val dictionary = Dictionary() // Asumiendo que esta clase está disponible
-                value.forEach { (key, mapValue) ->
-                    dictionary[key as String] = convertToGodotType(mapValue) // Conversión recursiva
-                }
-                dictionary
+    private fun hashMapToDictionary(hashMap: HashMap<*, *>): Dictionary {
+        val dictionary = Dictionary()
+
+        for ((key, value) in hashMap) {
+            when (value) {
+                is HashMap<*, *> -> dictionary[key.toString()] = hashMapToDictionary(value)
+                is List<*> -> dictionary[key.toString()] = listToDictionary(value)
+                is Array<*> -> dictionary[key.toString()] = listToDictionary(value.toList())
+                else -> dictionary[key.toString()] = value
             }
-            is List<*> -> { // Si es una List, conviértela a un MutableList (Array análogo en Kotlin)
-                val list = mutableListOf<Any?>()
-                value.forEach { item ->
-                    list.add(convertToGodotType(item)) // Conversión recursiva para los elementos de la lista
-                }
-                list // Retorna la lista como un tipo compatible
-            }
-            else -> value // Otros tipos, como String, Int, Boolean, se devuelven tal cual
         }
+
+        return dictionary
+    }
+
+    private fun listToDictionary(list: List<*>): Array<Any?> {
+        return list.map { item ->
+            when (item) {
+                is HashMap<*, *> -> hashMapToDictionary(item)
+                is List<*> -> listToDictionary(item)
+                else -> item
+            }
+        }.toTypedArray()
     }
 
     private fun jsonToMap(jsonObject: org.json.JSONObject): Map<String, Any> {
