@@ -22,3 +22,4 @@
 /android/*/*/*/*/.idea/
 *.d
 *.o
+/android/*/*/build/
