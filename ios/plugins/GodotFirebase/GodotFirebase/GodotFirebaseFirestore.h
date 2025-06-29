@@ -17,6 +17,7 @@ protected:
     // Declaración de métodos auxiliares
     NSObject *convert_variant_to_nsobject(Variant value);
     Variant nsobject_to_variant(NSObject *object);
+    Dictionary signalData(bool success, Variant result, String callback);
 
 public:
     static GodotFirebaseFirestore *get_singleton();
