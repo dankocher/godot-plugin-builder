@@ -1,15 +1,21 @@
 #import "GodotFirebase.h"
 
-GodotFirebase *GodotFirebase::instance = NULL;
+GodotFirebase *GodotFirebase::instance = nullptr;
 
 GodotFirebase::GodotFirebase() {
-    ERR_FAIL_COND(instance != NULL);
+    ERR_FAIL_COND(instance != nullptr);
     instance = this;
+
+    // Configurar Firebase
+    if (![FIRApp defaultApp]) {
+        [FIRApp configure];
+        NSLog(@"[GodotFirebase] Firebase configured successfully");
+    }
 }
 
 GodotFirebase::~GodotFirebase() {
     if (instance == this) {
-        instance = NULL;
+        instance = nullptr;
     }
 }
 
@@ -17,19 +23,11 @@ GodotFirebase *GodotFirebase::get_singleton() {
     return instance;
 }
 
-bool GodotFirebase::initialize() {
-    NSLog(@"Firebase Initialize");
-//    if ([FIRApp defaultApp] == nil) {
-//        [FIRApp configure]; // Configura Firebase
-//        emit_signal("firebase_initialized");
-//    }
-    
-    [FIRApp configure]; // Configura Firebase
-    emit_signal("firebase_initialized");
-    return true;
+void GodotFirebase::_bind_methods() {
+    ClassDB::bind_method(D_METHOD("initialize"), &GodotFirebase::initialize);
 }
 
-void GodotFirebase::_bind_methods() {
-    ADD_SIGNAL(MethodInfo("firebase_initialized"));
-    ClassDB::bind_method(D_METHOD("initialize"), &GodotFirebase::initialize);
+void GodotFirebase::initialize() {
+    // Método adicional por si necesitas inicialización extra
+    NSLog(@"[GodotFirebase] Additional initialization if needed");
 }

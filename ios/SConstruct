@@ -144,6 +144,7 @@ if env["plugin"] == "GodotFirebase":
 #         'plugins/GodotFirebase/Pods/GoogleSignIn/GoogleSignIn/Sources/Public',
         'plugins/GodotFirebase/Pods/GTMSessionFetcher/Sources/Core/Public',
         'plugins/GodotFirebase/Pods/FirebaseRemoteConfig/FirebaseRemoteConfig/Sources/Public',
+        'plugins/GodotFirebase/Frameworks/FirebaseFunctions.xcframework/ios-arm64/FirebaseFunctions.framework/Headers',
         'plugins/GodotFirebase/Pods/Headers/Public',  # Otros headers de CocoaPods
 #         generated_swift_header
     ])
@@ -152,6 +153,7 @@ if env["plugin"] == "GodotFirebase":
     env.Append(CCFLAGS=[
         "-Fplugins/GodotFirebase/Pods/FirebaseAnalytics/Frameworks/FirebaseAnalytics.xcframework/ios-arm64/",
         "-Fplugins/GodotFirebase/Frameworks/FirebaseAuth.xcframework/ios-arm64/",
+        "-Fplugins/GodotFirebase/Frameworks/FirebaseFunctions.xcframework/ios-arm64/",
         "-Fplugins/GodotFirebase/Frameworks/GoogleSignIn.xcframework/ios-arm64/",
         "-Fplugins/GodotFirebase/Frameworks/FirebaseAuthInterop.xcframework/ios-arm64/",
 #         "-Fplugins/GodotFirebase/Pods/FirebaseAnalytics/Frameworks/FirebaseAnalytics.xcframework/ios-arm64_x86_64-simulator",  # Framework para simuladores
@@ -161,14 +163,20 @@ if env["plugin"] == "GodotFirebase":
         "-framework", "FirebaseAnalytics",  # Asegúrate de enlazar el framework correctamente
         "-Fplugins/GodotFirebase/Pods/FirebaseAnalytics/Frameworks/FirebaseAnalytics.xcframework/ios-arm64/",
         "-Fplugins/GodotFirebase/Frameworks/FirebaseAuth.xcframework/ios-arm64/",
+        "-Fplugins/GodotFirebase/Frameworks/FirebaseFunctions.xcframework/ios-arm64/",
         "-Fplugins/GodotFirebase/Frameworks/GoogleSignIn.xcframework/ios-arm64/",
         "-Fplugins/GodotFirebase/Frameworks/FirebaseAuthInterop.xcframework/ios-arm64/",
 #         "-Fplugins/GodotFirebase/Pods/FirebaseAnalytics/Frameworks/FirebaseAnalytics.xcframework/ios-arm64_x86_64-simulator",  # Para simuladores
+
+        "-framework", "FirebaseFunctions",
+
     ])
 
     env.Append(FRAMEWORKPATH=[
         '#plugins/GodotFirebase/Pods/FirebaseAnalytics/Frameworks/FirebaseAnalytics.xcframework/ios-arm64/',
+        '-Fplugins/GodotFirebase/Pods/FirebaseFunctions/Functions/FirebaseFunctions.xcframework/ios-arm64',
         "-Fplugins/GodotFirebase/Frameworks/FirebaseAuth.xcframework/ios-arm64/",
+        "-Fplugins/GodotFirebase/Frameworks/FirebaseFunctions.xcframework/ios-arm64/",
         "-Fplugins/GodotFirebase/Frameworks/GoogleSignIn.xcframework/ios-arm64/",
         "-Fplugins/GodotFirebase/Frameworks/FirebaseAuthInterop.xcframework/ios-arm64/",
     ])
