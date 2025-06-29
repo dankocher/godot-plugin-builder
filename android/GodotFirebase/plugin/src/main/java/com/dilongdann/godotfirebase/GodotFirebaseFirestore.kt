@@ -50,7 +50,7 @@ class GodotFirebaseFirestore(godot: Godot) : GodotPlugin(godot) {
          firestore.collection(collection)
              .add(documentData)
              .addOnSuccessListener {
-                 emitSignal("document_added", signalData(true, "", callback))
+                 emitSignal("document_added", signalData(true, data, callback))
              }
              .addOnFailureListener { e ->
                  emitSignal("document_added", signalData(false, e.message ?: "Unknown error", callback))
@@ -65,7 +65,7 @@ class GodotFirebaseFirestore(godot: Godot) : GodotPlugin(godot) {
              .document(documentId)
              .set(documentData)
              .addOnSuccessListener {
-                 emitSignal("document_updated", signalData(true, "", callback))
+                 emitSignal("document_updated", signalData(true, data, callback))
              }
              .addOnFailureListener { e ->
                  emitSignal("document_updated", signalData(false, e.message ?: "Unknown error", callback))
@@ -99,7 +99,7 @@ class GodotFirebaseFirestore(godot: Godot) : GodotPlugin(godot) {
             .document(documentId)
             .update(documentData)
             .addOnSuccessListener {
-                emitSignal("document_updated", signalData(true, "", callback)) // Emitimos la señal de éxito
+                emitSignal("document_updated", signalData(true, data, callback)) // Emitimos la señal de éxito
             }
             .addOnFailureListener { e ->
                 emitSignal("document_updated", signalData(false, e.message ?: "Unknown error", callback)) // Emitimos la señal de error
