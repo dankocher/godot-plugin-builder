@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+
+    <application>
+        <activity android:name="com.dilongdann.godotfirebase.GoogleSignInActivity"
+                    android:theme="@style/Theme.AppCompat"
+            />
+
+        <meta-data
+                android:name="org.godotengine.plugin.v2.${godotPluginName}"
+                android:value="${godotPluginPackageName}.${godotPluginName}"/>
+        <meta-data
+                android:name="org.godotengine.plugin.v2.${godotPluginName}Auth"
+                android:value="${godotPluginPackageName}.${godotPluginName}Auth"/>
+        <meta-data
+                android:name="org.godotengine.plugin.v2.${godotPluginName}RemoteConfig"
+                android:value="${godotPluginPackageName}.${godotPluginName}RemoteConfig"/>
+        <meta-data
+                android:name="org.godotengine.plugin.v2.${godotPluginName}Analytics"
+                android:value="${godotPluginPackageName}.${godotPluginName}Analytics"/>
+        <meta-data
+                android:name="org.godotengine.plugin.v2.${godotPluginName}Firestore"
+                android:value="${godotPluginPackageName}.${godotPluginName}Firestore"/>
+        <meta-data
+                android:name="org.godotengine.plugin.v2.${godotPluginName}Functions"
+                android:value="${godotPluginPackageName}.${godotPluginName}Functions"/>
+    </application>
+
+</manifest>
